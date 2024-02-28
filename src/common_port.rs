@@ -123,6 +123,7 @@ pub trait AddressParserToConnection {
     fn to_string(&self) -> String;
 }
 impl AddressParserToConnection for AddressParser {
+    #[allow(unreachable_code)]
     fn one_time_connection(&self,msg_data: String,) -> usize {
         let client_obj = TcpStream::connect(AddressParser::local_addr_for_binding(self.clone()));
         if client_obj.is_err() {
