@@ -9,6 +9,7 @@ use goxoy_address_parser::address_parser::AddressParser;
 #[derive(Debug)]
 pub struct CommonPort {
     addr: String,
+    error_text: String,
     list:Arc<Mutex<Vec<String>>>,
     shutdown:Arc<Mutex<bool>>,
     shutdown_is_done:Arc<Mutex<bool>>,
@@ -17,6 +18,7 @@ impl CommonPort {
     pub fn new(addr:String) -> Self {
         CommonPort {
             addr,
+            error_text:String::new(),
             list:Arc::new(Mutex::new(Vec::new())),
             shutdown:Arc::new(Mutex::new(false)),
             shutdown_is_done:Arc::new(Mutex::new(false)),
@@ -51,7 +53,7 @@ impl CommonPort {
         let local_addr_url = AddressParser::local_addr_for_binding(common_addr.clone());
         let listener = TcpListener::bind(&local_addr_url);
         if listener.is_err() {
-            println!("listener error");
+            self.error_text="listener error".to_string();
             return false;
         }
         let list_cloned = self.list.clone();
@@ -69,12 +71,12 @@ impl CommonPort {
                         match socket.read(&mut buff) {
                             Ok(_income_data_length) => {
                                 if socket.write_all("ok".as_bytes()).is_err() {
-                                    //println!("{}  >  {}",host_addr_cloned.clone(),"Message Sending Error [code:6587]".to_string(),);
+                                    //self.error_text="Message Sending Error".to_string();
                                 }
                                 let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
                                 let response = String::from_utf8_lossy(&msg).to_string();                
                                 list_cloned.lock().unwrap().push(response.clone());
-                                println!("{}  >  Message Received > ", response.clone());
+                                //println!("{}  >  Message Received > ", response.clone());
                                 break 'inner_thread_loop;
                             }
                             Err(_) => {}

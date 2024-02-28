@@ -10,7 +10,7 @@ checksum = "f390ea1834b3518648203c3b32abd75cd6fcb7e481e2f51148d4b399f51f17ba"
 
 [[package]]
 name = "goxoy_tcp_common"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "goxoy-address-parser",
 ]
